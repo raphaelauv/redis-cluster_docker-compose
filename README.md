@@ -1,4 +1,4 @@
-# redis-cluster-docker-compose
+# Redis-cluster docker-compose
 
 run
 ```shell
