@@ -1,67 +1,44 @@
 version: '3.8'
 
-networks:
-  default:
-    ipam:
-      config:
-        - subnet: 10.5.0.0/16
 services:
   redis-main-1:
-    image: redis:6-buster
+    image: redis:7.0-rc3-bullseye
     volumes:
       - ./resources/config/redis.conf:/usr/local/etc/redis/redis.conf
     command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
-    networks:
-      default:
-        ipv4_address: 10.5.0.5
 
   redis-main-2:
-    image: redis:6-buster
+    image: redis:7.0-rc3-bullseye
     volumes:
       - ./resources/config/redis.conf:/usr/local/etc/redis/redis.conf
     command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
-    networks:
-      default:
-        ipv4_address: 10.5.0.6
 
   redis-main-3:
-    image: redis:6-buster
+    image: redis:7.0-rc3-bullseye
     volumes:
       - ./resources/config/redis.conf:/usr/local/etc/redis/redis.conf
     command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
-    networks:
-      default:
-        ipv4_address: 10.5.0.7
 
   redis-replica-1:
-    image: redis:6-buster
+    image: redis:7.0-rc3-bullseye
     volumes:
       - ./resources/config/redis.conf:/usr/local/etc/redis/redis.conf
     command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
-    networks:
-      default:
-        ipv4_address: 10.5.0.8
 
   redis-replica-2:
-    image: redis:6-buster
+    image: redis:7.0-rc3-bullseye
     volumes:
       - ./resources/config/redis.conf:/usr/local/etc/redis/redis.conf
     command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
-    networks:
-      default:
-        ipv4_address: 10.5.0.9
 
   redis-replica-3:
-    image: redis:6-buster
+    image: redis:7.0-rc3-bullseye
     volumes:
       - ./resources/config/redis.conf:/usr/local/etc/redis/redis.conf
     command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
-    networks:
-      default:
-        ipv4_address: 10.5.0.10
 
   redis-cluster-create:
-    image: redis:6-buster
+    image: redis:7.0-rc3-bullseye
     depends_on:
       - redis-main-1
       - redis-main-2
@@ -69,19 +46,15 @@ services:
       - redis-replica-1
       - redis-replica-2
       - redis-replica-3
-    networks:
-      - default
     command: [
         "/bin/bash", "-c",
-        "echo yes | redis-cli --cluster-replicas 1 --cluster create 10.5.0.5:6379 10.5.0.6:6379 10.5.0.7:6379 10.5.0.8:6379 10.5.0.9:6379 10.5.0.10:6379"
+        "echo yes | redis-cli --cluster-replicas 1 --cluster create redis-main-1:6379 redis-main-2:6379 redis-main-3:6379 redis-replica-1:6379 redis-replica-2:6379 redis-replica-3:6379"
     ]
 
   redis-commander:
     image: rediscommander/redis-commander
     depends_on:
       - redis-cluster-create
-    networks:
-      - default
     environment:
       REDIS_HOSTS: local:redis-main-1:6379,local:redis-main-2:6379,local:redis-main-3:6379,local:redis-replica-1:6379,local:redis-replica-2:6379,local:redis-replica-3:6379
       STANDALONE: "true"
@@ -90,8 +63,6 @@ services:
 
   redisinsight-config:
     image: ellerbrock/alpine-bash-curl-ssl
-    networks:
-      - default
     entrypoint: [ ]
     command: [
         "/bin/bash", "-c",
@@ -115,7 +86,5 @@ services:
     depends_on:
       - redis-cluster-create
       - redisinsight-config
-    networks:
-      - default
     ports:
       - "8083:8001"
