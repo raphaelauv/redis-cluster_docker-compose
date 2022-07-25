@@ -1,8 +1,8 @@
-# Redis-cluster docker-compose
+# Redis-cluster docker compose
 
 run
 ```shell
-docker-compose up -d 
+docker compose up -d
 ```
 
 will start a redis cluster with 3 main nodes and 3 replicas nodes
