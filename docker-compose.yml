@@ -2,43 +2,43 @@ version: '3.8'
 
 services:
   redis-main-1:
-    image: redis:7.0-bullseye
+    image: redis:7.2
     volumes:
       - ./resources/config/redis.conf:/usr/local/etc/redis/redis.conf
     command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
 
   redis-main-2:
-    image: redis:7.0-bullseye
+    image: redis:7.2
     volumes:
       - ./resources/config/redis.conf:/usr/local/etc/redis/redis.conf
     command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
 
   redis-main-3:
-    image: redis:7.0-bullseye
+    image: redis:7.2
     volumes:
       - ./resources/config/redis.conf:/usr/local/etc/redis/redis.conf
     command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
 
   redis-replica-1:
-    image: redis:7.0-bullseye
+    image: redis:7.2
     volumes:
       - ./resources/config/redis.conf:/usr/local/etc/redis/redis.conf
     command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
 
   redis-replica-2:
-    image: redis:7.0-bullseye
+    image: redis:7.2
     volumes:
       - ./resources/config/redis.conf:/usr/local/etc/redis/redis.conf
     command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
 
   redis-replica-3:
-    image: redis:7.0-bullseye
+    image: redis:7.2
     volumes:
       - ./resources/config/redis.conf:/usr/local/etc/redis/redis.conf
     command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
 
   redis-cluster-create:
-    image: redis:7.0-bullseye
+    image: redis:7.2
     depends_on:
       - redis-main-1
       - redis-main-2
