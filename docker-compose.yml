@@ -1,44 +1,42 @@
-version: '3.8'
-
 services:
   redis-main-1:
-    image: redis:7.2
+    image: redis:8.2
     volumes:
       - ./resources/config/redis.conf:/usr/local/etc/redis/redis.conf
     command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
 
   redis-main-2:
-    image: redis:7.2
+    image: redis:8.2
     volumes:
       - ./resources/config/redis.conf:/usr/local/etc/redis/redis.conf
     command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
 
   redis-main-3:
-    image: redis:7.2
+    image: redis:8.2
     volumes:
       - ./resources/config/redis.conf:/usr/local/etc/redis/redis.conf
     command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
 
   redis-replica-1:
-    image: redis:7.2
+    image: redis:8.2
     volumes:
       - ./resources/config/redis.conf:/usr/local/etc/redis/redis.conf
     command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
 
   redis-replica-2:
-    image: redis:7.2
+    image: redis:8.2
     volumes:
       - ./resources/config/redis.conf:/usr/local/etc/redis/redis.conf
     command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
 
   redis-replica-3:
-    image: redis:7.2
+    image: redis:8.2
     volumes:
       - ./resources/config/redis.conf:/usr/local/etc/redis/redis.conf
     command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
 
   redis-cluster-create:
-    image: redis:7.2
+    image: redis:8.2
     depends_on:
       - redis-main-1
       - redis-main-2
@@ -64,27 +62,23 @@ services:
   redisinsight-config:
     image: ellerbrock/alpine-bash-curl-ssl
     entrypoint: [ ]
+    depends_on:
+      - redisinsight
     command: [
-        "/bin/bash", "-c",
-        "sleep 20 &&\
-        curl --location --request POST 'redisinsight:8001/api/instance/' \
+      "/bin/bash", "-c",
+      "sleep 5 &&\
+        curl --location --request POST 'redisinsight:5540/api/databases/' \
         --header 'Content-Type: application/json' \
                                   --data-raw '{
           \"name\": \"CLUSTER-LOCAL\",
-          \"connectionType\": \"CLUSTER\",
-          \"seedNodes\": [
-            {
-              \"host\": \"redis-main-1\",
-              \"port\": 6379
-            }
-          ]
+          \"host\": \"redis-main-1\",
+          \"port\": 6379
         }'"
     ]
 
   redisinsight:
-    image: redislabs/redisinsight
+    image: redislabs/redisinsight:2.70.0
     depends_on:
       - redis-cluster-create
-      - redisinsight-config
     ports:
-      - "8083:8001"
+      - "5540:5540"
